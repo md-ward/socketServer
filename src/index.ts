@@ -1,10 +1,11 @@
-import express, { Application } from "express";
+import express, { Application, response } from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import http from "http";
 import cors from "cors";
 import { Server, Socket } from "socket.io";
 import userRouter from "./routers/userRouter";
+import { sendMessage } from "./controllers/chatControllers";
 
 // Load environment variables
 dotenv.config();
@@ -40,17 +41,18 @@ io.on("connection", (socket: Socket) => {
   onlineUsers.set(userId, socket.id);
 
   // Listen for messages
-  socket.on("sendMessage", (data) => {
+  socket.on("sendMessage", async (data) => {
     const { recipientId, message } = data;
     console.log(`Message from ${userId} to ${recipientId}: ${message}`);
 
     const recipientSocketId = onlineUsers.get(recipientId);
     console.log(`Recipient Socket ID: ${recipientSocketId}`);
+    let messageObj = await sendMessage(userId, recipientId, message);
 
     if (recipientSocketId) {
       io.to(recipientSocketId).emit("receiveMessage", {
         senderId: userId,
-        message,
+        messageObj,
       });
     }
   });
