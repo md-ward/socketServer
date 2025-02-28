@@ -1,24 +1,21 @@
 import { Document, model, Schema } from "mongoose";
 import { Chat } from "./chatSchema";
-import { User } from "./userSchema";
 
 export interface Message extends Document {
-  senderId: User["_id"];
-  receiverId: User["_id"];
+  senderId: String;
+  receiverId: String;
   message: string;
-  chat: Chat["_id"];
+  chat?: Chat["_id"];
 }
 
 const messageSchema = new Schema<Message>(
   {
     senderId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
       required: true,
     },
     receiverId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
       required: true,
     },
     message: {
@@ -26,8 +23,8 @@ const messageSchema = new Schema<Message>(
       required: true,
     },
     chat: {
-      type: Schema.Types.ObjectId,
-      ref: "Chat",
+      type: [Schema.Types.ObjectId],
+      ref: "Chats",
       required: true, // Making it required
       index: true, // Indexing for faster queries
     },

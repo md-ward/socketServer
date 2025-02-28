@@ -1,95 +1,66 @@
 import { Request, Response } from "express";
 import { Chat } from "../schema/chatSchema";
 import { Message } from "../schema/messageSchema";
-//najib first push
-//note : didnt test it yet
-export interface req {
-  body: {
-    senderId: string;
-    receiverId: string;
-    messageData: String;
-    key?: string; // Optional key
-  };
-}
+import { System } from "../schema/systemSchema";
 
-// Create a new chat
-export const createChat = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const creatChat = async (chat: Chat): Promise<void> => {
   try {
-    const chat = new Chat(req.body);
-    await chat.save();
-    res.status(201).json(chat);
-  } catch (error: Error | any) {
-    res.status(400).json({ message: error.message });
-  }
-};
+    const newchat = await new Chat(chat);
+    const system = await System.findById(chat.system);
 
-// Get messages for a chat
-export const getMessages = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const messages = await Message.find({ chat: req.params.chatId })
-      .populate("senderId")
-      .populate("receiverId");
-    res.status(200).json(messages);
-  } catch (error: Error | any) {
-    res.status(400).json({ message: error.message });
+    // Add the new chat to the system's chats array
+    system?.chats.push(newchat._id);
+
+    // Use Promise.all to handle saving both the system and newchat concurrently
+    await Promise.all([
+      newchat.save(), // Save newchat data
+      system?.save(), // Save system data (if system exists)
+    ]);
+  } catch (error) {
+    // Handle the error (you can log it or take other actions)
+    console.error("Error during saving chat or system:", error);
   }
 };
 
 // Send a new message
-export const sendMessage = async (req: Request): Promise<Message | Error> => {
+export const sendMessage = async (
+  message: Message,
+  apiKey: String,
+  system: System["_id"]
+): Promise<Message | Error> => {
   try {
-    const { senderId, receiverId, messageData, key } = req.body;
-
-    // Determine identifier based on request origin (external system vs. internal user)
-    const identifier = key.e
-      ? `${senderId}${key}${receiverId}${key}`
-      : `${senderId}${receiverId}`;
-
-    // Check if chat already exists
     let chat = await Chat.findOne({
-      $or: [
-        { identifier },
-        {
-          identifier: key
-            ? `${receiverId}${key}${senderId}${key}`
-            : `${receiverId}${senderId}`,
-        },
-      ],
+      system: system,
+      Participants: { $all: [message.senderId, message.receiverId] },
     });
 
-    // Create a new chat if it doesn't exist
     if (!chat) {
-      chat = new Chat({
-        users: [senderId, receiverId],
+      const chatData = {
+        system: system,
+        Participants: [message.senderId, message.receiverId],
         chatType: "single",
-        identifier, // Corrected typo (previously "identefier")
-      });
+        messages: [],
+      };
+      chat = await Chat.create(chatData); // Save it to the database
       await chat.save();
     }
+    if (chat) {
+      const newmessage = new Message({
+        senderId: message.senderId,
+        receiverId: message.receiverId,
+        message: message.message,
+        chat: chat._id,
+      });
+      await message.save();
 
-    // Create and save the message
-    const messageObj = new Message({
-      senderId,
-      receiverId,
-      messageData,
-      chat: chat._id,
-    });
+      chat.messages.push(message._id);
+      await chat.save();
 
-    await messageObj.save();
-    return messageObj;
+      return newmessage;
+    } else throw new Error();
+    return message;
   } catch (error) {
     console.error("Error in sendMessage:", error);
     return new Error("Failed to send message");
   }
 };
-
-// Check if a chat exists between the two users
-//befor sendig the user ID chack the request if it is from a externel system or internel user
-//externel system => sendrID+systemKey,ReciverID+systemKey {type : String}!!!
-//internel user => Sender tag,reciver tag {type : String}!!!

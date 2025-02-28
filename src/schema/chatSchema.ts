@@ -1,20 +1,19 @@
 import { Document, model, Schema } from "mongoose";
 import { Message } from "./messageSchema";
-import { User } from "./userSchema";
+import { System } from "./systemSchema";
 
 export interface Chat extends Document {
-  users: String[];
+  system: System["_id"];
   messages: Message["_id"][];
   chatType: "single" | "group";
-  identifier: Number;
-  Type: "Internel" | "Externel";
+  Participants: String[] | [];
 }
 
 const chatSchema = new Schema<Chat>(
   {
-    users: {
-      type: [String],
-      ref: "User",
+    system: {
+      type: [Schema.Types.ObjectId],
+      ref: "System",
       required: true,
     },
     messages: {
@@ -25,14 +24,6 @@ const chatSchema = new Schema<Chat>(
     chatType: {
       type: String,
       enum: ["single", "group"], // Only allow "single" or "group"
-      required: true,
-    },
-    identifier: {
-      type: String,
-      required: true,
-    },
-    Type: {
-      Type: String,
       required: true,
     },
   },

@@ -2,21 +2,15 @@ import { Document, model, Schema } from "mongoose";
 import { Chat } from "./chatSchema";
 import { Message } from "./messageSchema";
 
-export interface User extends Document {
-  name: string;
-  type: "system" | "user";
+//app schema
+export interface System extends Document {
   identifier: string;
   chats: Chat["_id"][];
-  messages: Message["_id"][];
-  key: String;
+  apiKey: String;
 }
 
-const userSchema = new Schema<User>(
+const systemSchema = new Schema<System>(
   {
-    name: {
-      type: String,
-      required: true,
-    },
     identifier: {
       type: String,
       required: true,
@@ -29,17 +23,7 @@ const userSchema = new Schema<User>(
         ref: "Chat",
       },
     ],
-    type: {
-      type: String,
-      required: true,
-    },
-    messages: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Message",
-      },
-    ],
-    key: {
+    apiKey: {
       type: String,
       required: false,
       unique: true,
@@ -50,4 +34,4 @@ const userSchema = new Schema<User>(
   }
 );
 
-export const User = model<User>("User", userSchema);
+export const System = model<System>("System", systemSchema);
