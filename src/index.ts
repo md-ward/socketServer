@@ -43,11 +43,15 @@ io.on("connection", (socket: Socket) => {
   // Listen for messages
   socket.on("sendMessage", async (data) => {
     const { message, apiKey, System } = data;
-    console.log(`Message from ${userId} to ${message.recipientId}: ${message}`);
+    console.log(`Message from ${userId} to ${message.receiverId}: ${message}`);
 
-    const recipientSocketId = onlineUsers.get(message.recipientId);
+    const recipientSocketId = onlineUsers.get(message.receiverId);
     console.log(`Recipient Socket ID: ${recipientSocketId}`);
-    let messageObj = await sendMessage(message,apiKey,System);
+    let messageObj = await sendMessage(
+      { ...message, senderId: userId },
+      apiKey,
+      System
+    );
 
     if (recipientSocketId) {
       io.to(recipientSocketId).emit("receiveMessage", {

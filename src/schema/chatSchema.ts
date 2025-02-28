@@ -26,6 +26,10 @@ const chatSchema = new Schema<Chat>(
       enum: ["single", "group"], // Only allow "single" or "group"
       required: true,
     },
+    Participants: {
+      type: [String],
+      required: true,
+    },
   },
   { timestamps: true }
 );

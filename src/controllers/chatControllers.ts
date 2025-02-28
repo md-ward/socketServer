@@ -29,6 +29,8 @@ export const sendMessage = async (
   system: System["_id"]
 ): Promise<Message | Error> => {
   try {
+    console.log(message);
+
     let chat = await Chat.findOne({
       system: system,
       Participants: { $all: [message.senderId, message.receiverId] },
@@ -51,9 +53,9 @@ export const sendMessage = async (
         message: message.message,
         chat: chat._id,
       });
-      await message.save();
+      await newmessage.save();
 
-      chat.messages.push(message._id);
+      chat.messages.push(newmessage._id);
       await chat.save();
 
       return newmessage;
