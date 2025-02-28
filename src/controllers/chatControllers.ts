@@ -2,6 +2,16 @@ import { Request, Response } from "express";
 import { Chat } from "../schema/chatSchema";
 import { Message } from "../schema/messageSchema";
 //najib first push
+
+export interface req {
+  body: {
+    senderId: string;
+    receiverId: string;
+    messageData: String;
+    key?: string; // Optional key
+  };
+}
+
 // Create a new chat
 export const createChat = async (
   req: Request,
@@ -32,23 +42,33 @@ export const getMessages = async (
 };
 
 // Send a new message
-export const sendMessage = async (
-  senderId: string,
-  receiverId: string,
-  message: string
-): Promise<Message | Error> => {
+export const sendMessage = async (req: Request): Promise<Message | Error> => {
   try {
-    // Check if a chat exists between the two users
+    const { senderId, receiverId, messageData, key } = req.body;
+
+    // Determine identifier based on request origin (external system vs. internal user)
+    const identifier = key.e
+      ? `${senderId}${key}${receiverId}${key}`
+      : `${senderId}${receiverId}`;
+
+    // Check if chat already exists
     let chat = await Chat.findOne({
-      users: { $all: [senderId, receiverId] },
-      chatType: "single",
+      $or: [
+        { identifier },
+        {
+          identifier: key
+            ? `${receiverId}${key}${senderId}${key}`
+            : `${receiverId}${senderId}`,
+        },
+      ],
     });
 
-    // If no chat exists, create a new one
+    // Create a new chat if it doesn't exist
     if (!chat) {
       chat = new Chat({
         users: [senderId, receiverId],
         chatType: "single",
+        identifier, // Corrected typo (previously "identefier")
       });
       await chat.save();
     }
@@ -57,13 +77,19 @@ export const sendMessage = async (
     const messageObj = new Message({
       senderId,
       receiverId,
-      message,
+      messageData,
       chat: chat._id,
     });
-    await messageObj.save();
 
+    await messageObj.save();
     return messageObj;
-  } catch (error: Error | any) {
-    return error;
+  } catch (error) {
+    console.error("Error in sendMessage:", error);
+    return new Error("Failed to send message");
   }
 };
+
+// Check if a chat exists between the two users
+//befor sendig the user ID chack the request if it is from a externel system or internel user
+//externel system => sendrID+systemKey,ReciverID+systemKey {type : String}!!!
+//internel user => Sender tag,reciver tag {type : String}!!!

@@ -4,9 +4,11 @@ import { Message } from "./messageSchema";
 
 export interface User extends Document {
   name: string;
+  type: "system" | "user";
   identifier: string;
   chats: Chat["_id"][];
   messages: Message["_id"][];
+  key: String;
 }
 
 const userSchema = new Schema<User>(
@@ -19,7 +21,7 @@ const userSchema = new Schema<User>(
       type: String,
       required: true,
       unique: true, // Ensuring uniqueness
-      index: true,  // Indexing for faster lookups
+      index: true, // Indexing for faster lookups
     },
     chats: [
       {
@@ -27,12 +29,21 @@ const userSchema = new Schema<User>(
         ref: "Chat",
       },
     ],
+    type: {
+      type: String,
+      required: true,
+    },
     messages: [
       {
         type: Schema.Types.ObjectId,
         ref: "Message",
       },
     ],
+    key: {
+      type: String,
+      required: false,
+      unique: true,
+    },
   },
   {
     timestamps: true,
