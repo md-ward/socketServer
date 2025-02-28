@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Chat } from "../schema/chatSchema";
 import { Message } from "../schema/messageSchema";
 //najib first push
-
+//note : didnt test it yet
 export interface req {
   body: {
     senderId: string;
