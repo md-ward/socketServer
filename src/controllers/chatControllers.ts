@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Chat } from "../schema/chatSchema";
 import { Message } from "../schema/messageSchema";
-
+//najib first push
 // Create a new chat
 export const createChat = async (
   req: Request,
