@@ -5,6 +5,7 @@ import http from "http";
 import cors from "cors";
 import { Server, Socket } from "socket.io";
 import userRouter from "./routers/userRouter";
+import { createMessage, req } from "./controllers/messagecontroller";
 
 // Load environment variables
 dotenv.config();
@@ -40,15 +41,25 @@ io.on("connection", (socket: Socket) => {
   onlineUsers.set(userId, socket.id);
 
   // Listen for messages
-  socket.on("sendMessage", (data) => {
+  socket.on("message", (data) => {
     const { recipientId, message } = data;
+    console.log(data, " ", userId, " ");
+
     console.log(`Message from ${userId} to ${recipientId}: ${message}`);
 
     const recipientSocketId = onlineUsers.get(recipientId);
     console.log(`Recipient Socket ID: ${recipientSocketId}`);
 
     if (recipientSocketId) {
-      io.to(recipientSocketId).emit("receiveMessage", {
+      const req: req = {
+        body: {
+          userID: userId,
+          recipientId: recipientId,
+          message: message,
+        },
+      };
+      createMessage(req);
+      io.to(recipientSocketId).emit("message", {
         senderId: userId,
         message,
       });

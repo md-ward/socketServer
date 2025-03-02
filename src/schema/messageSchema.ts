@@ -3,8 +3,8 @@ import { Chat } from "./chatSchema";
 import { User } from "./userSchema";
 
 export interface Message extends Document {
-  senderId: User["_id"];
-  receiverId: User["_id"];
+  senderId: String;
+  receiverId: String;
   message: string;
   chat: Chat["_id"];
 }
@@ -12,12 +12,12 @@ export interface Message extends Document {
 const messageSchema = new Schema<Message>(
   {
     senderId: {
-      type: Schema.Types.ObjectId,
+      type: String,
       ref: "User",
       required: true,
     },
     receiverId: {
-      type: Schema.Types.ObjectId,
+      type: String,
       ref: "User",
       required: true,
     },
