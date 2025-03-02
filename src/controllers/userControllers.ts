@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import { User } from "../schema/userSchema";
+import { System } from "../schema/systemSchema";
 
-export const createUser = async (
+export const createSystem = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const user = new User(req.body);
+    const user = new System(req.body);
     await user.save();
     res.status(201).json(user);
   } catch (error: Error | any) {
@@ -19,7 +19,7 @@ export const updateUser = async (
   res: Response
 ): Promise<void> => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    const user = await System.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
     if (!user) {
@@ -36,7 +36,7 @@ export const deleteUser = async (
   res: Response
 ): Promise<void> => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
+    const user = await System.findByIdAndDelete(req.params.id);
     if (!user) {
       res.status(404).json({ message: "User not found" });
     }
@@ -46,12 +46,9 @@ export const deleteUser = async (
   }
 };
 
-export const getUsers = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-    const users = await User.find();
+    const users = await System.find();
     res.status(200).json(users);
   } catch (error: Error | any) {
     res.status(400).json({ message: error.message });

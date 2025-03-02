@@ -2,24 +2,20 @@ import { Document, model, Schema } from "mongoose";
 import { Chat } from "./chatSchema";
 import { Message } from "./messageSchema";
 
-export interface User extends Document {
-  name: string;
+//app schema
+export interface System extends Document {
   identifier: string;
   chats: Chat["_id"][];
-  messages: Message["_id"][];
+  apiKey: String;
 }
 
-const userSchema = new Schema<User>(
+const systemSchema = new Schema<System>(
   {
-    name: {
-      type: String,
-      required: true,
-    },
     identifier: {
       type: String,
       required: true,
       unique: true, // Ensuring uniqueness
-      index: true,  // Indexing for faster lookups
+      index: true, // Indexing for faster lookups
     },
     chats: [
       {
@@ -27,16 +23,15 @@ const userSchema = new Schema<User>(
         ref: "Chat",
       },
     ],
-    messages: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Message",
-      },
-    ],
+    apiKey: {
+      type: String,
+      required: false,
+      unique: true,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-export const User = model<User>("User", userSchema);
+export const System = model<System>("System", systemSchema);
