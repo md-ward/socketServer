@@ -46,18 +46,14 @@ io.on("connection", (socket: Socket) => {
     console.log(`Message from ${userId} to ${message.receiverId}: ${message}`);
 
     const recipientSocketId = onlineUsers.get(message.receiverId);
-    console.log(`Recipient Socket ID: ${recipientSocketId}`);
-    let messageObj = await sendMessage(
-      { ...message, senderId: userId },
-      apiKey,
-      System
-    );
 
     if (recipientSocketId) {
-      io.to(recipientSocketId).emit("receiveMessage", {
-        senderId: userId,
-        messageObj,
-      });
+      console.log(`Recipient Socket ID: ${recipientSocketId}`);
+      let messageObj = await sendMessage(
+        { ...message, senderId: userId },
+        apiKey,
+        System
+      );
     }
   });
 
