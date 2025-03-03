@@ -1,4 +1,4 @@
-import express, { Application, response } from "express";
+import express, { Application } from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import http from "http";
@@ -14,7 +14,7 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
-const port = process.env.PORT || 8002;
+const port = process.env.Chat_Port;
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -26,7 +26,7 @@ const io = new Server(server, {
 app.use("/user", userRouter);
 // MongoDB Connection
 mongoose
-  .connect("mongodb://127.0.0.1:27017/chattingServiceDb")
+  .connect(process.env.Chat_DB_URL as string)
   .then(() => console.log("Chatting ServiceConnected to MongoDB"))
   .catch((error) => console.error("Error connecting to MongoDB:", error));
 
@@ -48,7 +48,7 @@ io.on("connection", (socket: Socket) => {
 
     const recipientSocketId = onlineUsers.get(message.receiverId);
     console.log(`Recipient Socket ID: ${recipientSocketId}`);
-    let messageObj = await sendMessage(
+    const messageObj = await sendMessage(
       { ...message, senderId: userId },
       apiKey,
       System

@@ -1,5 +1,3 @@
-
-// import cryptoRandomString from "crypto-random-string";
 import { Request, Response } from "express";
 import System from "../schema/system";
 
@@ -34,16 +32,15 @@ export const createSystem = async (
     }
 
     // Generate API Key
-    // const generatedKey = cryptoRandomString({
-    //   length: 32,
-    //   type: "alphanumeric",
-    // });
+    const generatedKey = crypto
+      .getRandomValues(new Uint32Array(1))[0]
+      .toString(16);
 
     const system = new System({
       name,
       services,
-      apiKey: 'generatedKey',
-      expiryDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365), // 1-year expiry
+      apiKey: generatedKey,
+      expiryDate: new Date(Date.now() + 1000 * 60 * 60 * 24 *30 ), 
     });
 
     await system.save();
@@ -86,21 +83,11 @@ export const updateSystem = async (
 // Get System by API Key
 export const getSystem = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { apiKey } = req.query;
+    console.log(req.body.systemId);
 
-    if (!apiKey) {
-      res.status(400).json({ message: "API key is required." });
-      return;
-    }
-
-    const system = await System.findOne({ apiKey });
-
-    if (!system) {
-      res.status(404).json({ message: "System not found." });
-      return;
-    }
-
-    res.status(200).json(system);
+    res
+      .status(200)
+      .send({ message: "System found.", systemId: req.body.systemId });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error", error });

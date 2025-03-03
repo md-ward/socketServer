@@ -6,7 +6,7 @@ export interface Chat extends Document {
   system: System["_id"];
   messages: Message["_id"][];
   chatType: "single" | "group";
-  Participants: String[] | [];
+  Participants: string[] | [];
 }
 
 const chatSchema = new Schema<Chat>(
@@ -22,12 +22,12 @@ const chatSchema = new Schema<Chat>(
       default: [],
     },
     chatType: {
-      type: String,
+      type: Schema.Types.String,
       enum: ["single", "group"], // Only allow "single" or "group"
       required: true,
     },
     Participants: {
-      type: [String],
+      type: [Schema.Types.String],
       required: true,
     },
   },

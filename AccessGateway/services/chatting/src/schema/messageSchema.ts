@@ -2,8 +2,8 @@ import { Document, model, Schema } from "mongoose";
 import { Chat } from "./chatSchema";
 
 export interface Message extends Document {
-  senderId: String;
-  receiverId: String;
+  senderId: string;
+  receiverId: string;
   message: string;
   chat?: Chat["_id"];
 }

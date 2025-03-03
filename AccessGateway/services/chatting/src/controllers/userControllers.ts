@@ -9,7 +9,7 @@ export const createSystem = async (
     const user = new System(req.body);
     await user.save();
     res.status(201).json(user);
-  } catch (error: Error | any) {
+  } catch (error: any) {
     res.status(400).json({ message: error.message });
   }
 };
@@ -26,7 +26,7 @@ export const updateUser = async (
       res.status(404).json({ message: "User not found" });
     }
     res.status(200).json(user);
-  } catch (error: Error | any) {
+  } catch (error: any ) {
     res.status(400).json({ message: error.message });
   }
 };
@@ -41,7 +41,7 @@ export const deleteUser = async (
       res.status(404).json({ message: "User not found" });
     }
     res.status(200).json({ message: "User deleted" });
-  } catch (error: Error | any) {
+  } catch (error: any ) {
     res.status(400).json({ message: error.message });
   }
 };
@@ -50,7 +50,7 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const users = await System.find();
     res.status(200).json(users);
-  } catch (error: Error | any) {
+  } catch (error: any ) {
     res.status(400).json({ message: error.message });
   }
 };

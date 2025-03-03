@@ -9,20 +9,20 @@ const app = express();
 dotenv.config();
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.urlencoded({ extended: true }));
 app.use("/api", systemRouter);
 const server = http.createServer(app);
 
-const port = process.env.PORT || 8000;
-const mongoUri =
-  process.env.MONGO_URI || "mongodb://localhost:27017/accessGateway";
+const port = process.env.System_PORT;
 
 try {
-  mongoose.connect(mongoUri).then(() => {
+  mongoose.connect(process.env.System_DB_URL as string).then(() => {
     console.log("Connected to MongoDB");
   });
 
   server.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
-} catch (error) {}
+} catch (error) {
+  console.error("Error connecting to MongoDB:", error);
+}

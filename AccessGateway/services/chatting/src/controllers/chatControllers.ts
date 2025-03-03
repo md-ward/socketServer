@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import { Chat } from "../schema/chatSchema";
 import { Message } from "../schema/messageSchema";
 import { System } from "../schema/systemSchema";
@@ -25,7 +24,7 @@ export const creatChat = async (chat: Chat): Promise<void> => {
 // Send a new message
 export const sendMessage = async (
   message: Message,
-  apiKey: String,
+  apiKey: string,
   system: System["_id"]
 ): Promise<Message | Error> => {
   try {

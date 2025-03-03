@@ -1,18 +1,17 @@
 import { Document, model, Schema } from "mongoose";
 import { Chat } from "./chatSchema";
-import { Message } from "./messageSchema";
 
 //app schema
 export interface System extends Document {
   identifier: string;
   chats: Chat["_id"][];
-  apiKey: String;
+  apiKey: string;
 }
 
 const systemSchema = new Schema<System>(
   {
     identifier: {
-      type: String,
+      type: Schema.Types.String,
       required: true,
       unique: true, // Ensuring uniqueness
       index: true, // Indexing for faster lookups
@@ -24,7 +23,7 @@ const systemSchema = new Schema<System>(
       },
     ],
     apiKey: {
-      type: String,
+      type: Schema.Types.String,
       required: false,
       unique: true,
     },
