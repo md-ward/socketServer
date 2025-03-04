@@ -8,8 +8,9 @@ export const checkAccess = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { apiKey } = req.query;
-    console.log(apiKey);
+    const { service } = req.query;
+    const apiKey = req.headers["authorization"];
+    console.log(service, apiKey);
 
     if (!apiKey) {
       res.status(400).send({ message: "API key is required." });
@@ -18,6 +19,8 @@ export const checkAccess = async (
 
     const system = await System.findOne({ apiKey });
 
+    console.log({ system });
+
     const date = new Date();
     if (system) {
       if (system.expiryDate && date.getDate() > system.expiryDate.getDate()) {
@@ -25,9 +28,10 @@ export const checkAccess = async (
       }
     }
     if (!system) {
-      res.status(401).send({ message: "Unauthorized" });
+      res.status(401).send({ message: "Api key is Unauthorized" });
     } else {
-      req.body.systemId = system._id;
+      req.body.services = system.services;
+      
       next();
     }
   } catch (error) {
