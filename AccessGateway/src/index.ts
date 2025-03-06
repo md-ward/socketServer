@@ -49,8 +49,8 @@ const proxyMiddleware = createProxyMiddleware({
 });
 
 // Attach Proxy Middleware
+app.use("/api/sys", systemRouter);
 app.use("/api", checkAccess,proxyMiddleware);
-app.use("/sys", systemRouter);
 
 // Handle WebSocket Upgrade
 server.on("upgrade", proxyMiddleware.upgrade);

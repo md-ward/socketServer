@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import System from "../schema/system";
+import generateExpiryDate from "../utils/apiExpiry";
 
 // Allowed services based on the enum
 enum Service {
@@ -40,40 +41,48 @@ export const createSystem = async (
       name,
       services,
       apiKey: generatedKey,
-      expiryDate: new Date(Date.now() + 1000 * 60 * 60 * 24 *30 ), 
+      expiryDate: generateExpiryDate.oneMonth(),
     });
 
     await system.save();
     res.status(201).json(system);
-  } catch (error) {
+  } catch (error) { 
     console.error(error);
     res.status(500).json({ message: "Server error", error });
   }
 };
 
 // Update System
-export const updateSystem = async (
+export const extendApiKey = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const { apiKey } = req.body;
+    const apiKey = req.headers.authorization;
 
     if (!apiKey) {
       res.status(400).json({ message: "API key is required for updating." });
       return;
     }
 
-    const system = await System.findOneAndUpdate({ apiKey }, req.body, {
-      new: true,
-    });
+    const system = await System.findOneAndUpdate(
+      { apiKey },
+      { 
+        expiryDate: generateExpiryDate.oneMonth(),
+      },
+      {
+        new: true,
+      }
+    );
 
     if (!system) {
       res.status(404).json({ message: "System not found." });
       return;
     }
 
-    res.status(200).json(system);
+    res.status(200).send({
+      message: `API key Extended successfully till : ${system.expiryDate} `,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error", error });

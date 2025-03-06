@@ -1,14 +1,14 @@
 import { Router } from "express";
 import {
   createSystem,
+  extendApiKey,
   getSystem,
-  updateSystem,
 } from "../controllers/systemController";
 import { checkAccess } from "../middleware/accessApiCheck";
 
 const systemRouter = Router();
 systemRouter.post("/", createSystem);
 systemRouter.get("/", checkAccess, getSystem);
-systemRouter.put("/:id", updateSystem);
+systemRouter.put("/",extendApiKey);
 
 export default systemRouter;
