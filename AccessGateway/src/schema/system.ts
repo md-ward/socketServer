@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
 // Enum for allowed services
-enum Service {
+export enum Service {
   CHATTING = "chatting",
   ATTACHMENTS = "attachments",
 }

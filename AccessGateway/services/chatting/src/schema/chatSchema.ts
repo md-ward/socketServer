@@ -1,9 +1,8 @@
 import { Document, model, Schema } from "mongoose";
 import { Message } from "./messageSchema";
-import { System } from "./systemSchema";
 
 export interface Chat extends Document {
-  system: System["_id"];
+  systemId: string;
   messages: Message["_id"][];
   chatType: "single" | "group";
   Participants: string[] | [];
@@ -11,9 +10,8 @@ export interface Chat extends Document {
 
 const chatSchema = new Schema<Chat>(
   {
-    system: {
-      type: [Schema.Types.ObjectId],
-      ref: "System",
+    systemId: {
+      type: Schema.Types.String,
       required: true,
     },
     messages: {

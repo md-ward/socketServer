@@ -2,6 +2,7 @@ import { Document, model, Schema } from "mongoose";
 import { Chat } from "./chatSchema";
 
 export interface Message extends Document {
+  systemId: string;
   senderId: string;
   receiverId: string;
   message: string;
@@ -10,6 +11,10 @@ export interface Message extends Document {
 
 const messageSchema = new Schema<Message>(
   {
+    systemId: {
+      type: String,
+      required: true,
+    },
     senderId: {
       type: String,
       required: true,
