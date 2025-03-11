@@ -1,12 +1,7 @@
 import { Request, Response } from "express";
-import System from "../schema/system";
+import System, { Service } from "../schema/system";
 import generateExpiryDate from "../utils/apiExpiry";
 
-// Allowed services based on the enum
-enum Service {
-  chatting = "chatting",
-  attachments = "attachments",
-}
 
 // Create System
 export const createSystem = async (
@@ -25,6 +20,8 @@ export const createSystem = async (
 
     // Validate services
     const validServices = Object.values(Service);
+    console.log(validServices);
+    
     if (
       !services.every((service: Service) => validServices.includes(service))
     ) {

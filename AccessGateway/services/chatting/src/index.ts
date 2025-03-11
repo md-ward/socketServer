@@ -123,7 +123,7 @@ io.on("connection", (socket: Socket) => {
       console.log(`✅ Message forwarded to ${recipientId}`);
     } else {
       console.log(`❌ Recipient ${recipientId} is offline.`);
-    }
+    }   
   });
 
   // ✅ Handle User Disconnect

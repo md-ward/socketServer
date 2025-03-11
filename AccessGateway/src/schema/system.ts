@@ -4,10 +4,11 @@ import bcrypt from "bcrypt";
 export enum Service {
   CHATTING = "chatting",
   ATTACHMENTS = "attachments",
+  DRIVE = "drive",
 }
 
 // Define the interface for TypeScript
-interface ISystem extends Document {
+interface ISystem extends Document { 
   name: string;
   services: Service[];
   apiKey: string;

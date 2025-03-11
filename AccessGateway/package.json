@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently  \"nodemon ./src/index.ts\"  \"nodemon ./services/chatting/src/index.ts\" "
+    "start": "concurrently  \"nodemon ./src/index.ts\"  \"nodemon ./services/chatting/src/index.ts\" \"nodemon ./services/Drive-System/index.ts\" "
   },
   "author": "",
   "license": "ISC",
