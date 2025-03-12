@@ -1,7 +1,7 @@
 import { createProxyMiddleware } from "http-proxy-middleware";
 import http from "http";
 import net from "net";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 
 const servicesLinks = {
   chatting: "http://localhost:8002",
@@ -19,8 +19,8 @@ interface CustomRequest extends Request {
 // Proxy middleware function
 function proxyMiddleware(
   req: CustomRequest,
-  res: Response,
-  next: NextFunction
+  res: Response
+  // next: NextFunction
 ) {
   if (!req.body || !req.body.service) {
     res.status(400).json({ error: "Request body is missing or invalid" });
